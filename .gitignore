@@ -1,0 +1,14 @@
+# Ignorar arquivos de ambiente
+.env
+.env.local
+.env.*
+
+# Mas manter o exemplo
+!.env.example
+
+# Ignorar dependências
+node_modules/
+
+# Outros arquivos de log temporários
+npm-debug.log*
+yarn-error.log*

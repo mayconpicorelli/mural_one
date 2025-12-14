@@ -1,0 +1,101 @@
+{
+  "announcements": [
+    {
+      "id": 1,
+      "title": "Campanha Equilibrio 2025",
+      "date": "2025-12-05",
+      "tag": "Saude",
+      "description": "Check-ups preventivos e aulas especiais no programa Bem Estar.",
+      "owner": "RH Corporativo"
+    },
+    {
+      "id": 2,
+      "title": "Atualizacao Politica de Home Office",
+      "date": "2025-11-20",
+      "tag": "People",
+      "description": "Novas regras para solicitacao de trabalho remoto em ate 2 dias por semana.",
+      "owner": "Operacoes"
+    },
+    {
+      "id": 3,
+      "title": "Feira de Inovacao Interna",
+      "date": "2026-01-15",
+      "tag": "Eventos",
+      "description": "Inscricoes abertas para os squads apresentarem prototipos e pilotos.",
+      "owner": "PMO"
+    }
+  ],
+  "holidays": [
+    {
+      "date": "2025-12-25",
+      "title": "Natal",
+      "description": "Ponto facultativo, somente equipes criticas permanecem em escala.",
+      "units": [
+        { "name": "Sede Sao Paulo", "status": "Fechada" },
+        { "name": "Operacao Recife", "status": "Plantao" },
+        { "name": "Filial Porto Alegre", "status": "Fechada" }
+      ]
+    },
+    {
+      "date": "2026-01-01",
+      "title": "Confraternizacao Universal",
+      "description": "Todas as unidades fecham, apenas suporte global permanece on-call.",
+      "units": [
+        { "name": "Sede Sao Paulo", "status": "Fechada" },
+        { "name": "Operacao Recife", "status": "Fechada" },
+        { "name": "Filial Porto Alegre", "status": "Fechada" }
+      ]
+    },
+    {
+      "date": "2026-01-25",
+      "title": "Aniversario de Sao Paulo",
+      "description": "Unidades fora da capital funcionam normalmente.",
+      "units": [
+        { "name": "Sede Sao Paulo", "status": "Fechada" },
+        { "name": "Operacao Recife", "status": "Aberta" },
+        { "name": "Filial Porto Alegre", "status": "Aberta" }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "name": "Guia de Beneficios 2025",
+      "type": "PDF",
+      "updatedAt": "2025-10-01",
+      "owner": "Total Rewards",
+      "url": "https://example.com/beneficios.pdf"
+    },
+    {
+      "name": "Modelo de Formulario de Reembolso",
+      "type": "DOC",
+      "updatedAt": "2025-09-18",
+      "owner": "Financeiro",
+      "url": "https://example.com/reembolso.docx"
+    },
+    {
+      "name": "Calendario Treinamentos Tech",
+      "type": "Sheet",
+      "updatedAt": "2025-11-02",
+      "owner": "Academy",
+      "url": "https://example.com/treinamentos.xlsx"
+    }
+  ],
+  "materials": [
+    {
+      "title": "Onboarding Express",
+      "summary": "Atalho para videos e documentos indispensaveis aos novos talentos.",
+      "links": [
+        { "label": "Checklist de Acionamento", "url": "https://example.com/checklist" },
+        { "label": "Canal de Duvidas", "url": "https://teams.microsoft.com" }
+      ]
+    },
+    {
+      "title": "Ferramentas do Dia a Dia",
+      "summary": "Drive com templates, politicas e logos atualizados.",
+      "links": [
+        { "label": "Pasta Compartilhada", "url": "https://drive.google.com" },
+        { "label": "Dashboard PowerBI", "url": "https://app.powerbi.com" }
+      ]
+    }
+  ]
+}

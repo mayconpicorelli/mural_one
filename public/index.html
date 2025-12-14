@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mural One | Portal Interno</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell" id="app-shell">
+      <div class="cursor-orb" id="cursor-orb"></div>
+      <header class="portal-header">
+        <div class="brand-group">
+          <div class="logo-dot"></div>
+          <div>
+            <p class="brand-title">Picorelli One
+            <p class="brand-subtitle">Painel interno</p>
+          </div>
+        </div>
+        <div class="header-meta">
+          <div class="user-summary">
+            <span id="welcome-user">Visitante</span>
+            <small id="live-clock">--:--</small>
+          </div>
+          <div class="contact-links">
+            <a href="mailto:rh@empresa.com" class="contact-link">Fale conosco</a>
+            <a href="https://wa.me/5532984217326" class="contact-link" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          </div>
+          <button class="ghost-button" id="logout-button" type="button">Sair</button>
+        </div>
+      </header>
+
+      <main class="portal-grid">
+        <section class="panel" id="mural-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Mural de avisos</h2>
+              <p>Comunicados oficiais e informacoes prioritarias.</p>
+            </div>
+            <button class="ghost-button" id="refresh-mural" type="button">Atualizar</button>
+          </div>
+          <div class="announcement-list" id="announcement-list"></div>
+        </section>
+
+        <section class="panel" id="calendar-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Calendario & feriados</h2>
+              <p>Status por unidade e previsao de folgas.</p>
+            </div>
+            <div class="calendar-nav">
+              <button class="ghost-button" id="prev-month" type="button">&#x276E;</button>
+              <span id="calendar-month"></span>
+              <button class="ghost-button" id="next-month" type="button">&#x276F;</button>
+            </div>
+          </div>
+          <div class="calendar-wrapper">
+            <div class="calendar-grid" id="calendar-grid"></div>
+            <div class="holiday-list" id="holiday-list"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="resources-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Arquivos & materiais uteis</h2>
+              <p>Modelos, guias e atalhos mais acessados.</p>
+            </div>
+          </div>
+          <div class="resource-list" id="resource-list"></div>
+          <div class="materials-list" id="materials-list"></div>
+        </section>
+
+        <section class="panel ai-panel" id="ai-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Agente GPT corporativo</h2>
+              <p>Controlado pela gestão de tecnologia com politicas e temperatura customizadas.</p>
+            </div>
+            <div class="ai-status" id="ai-status">Offline</div>
+          </div>
+          <div class="ai-settings">
+            <label class="slider-field">
+              Temperatura
+              <input type="range" id="temperature" min="0" max="1" value="0.3" step="0.1" />
+              <span id="temperature-value">0.3</span>
+            </label>
+            <label>
+              Prompt de sistema
+              <textarea id="system-prompt" rows="2" placeholder="Defina limites e tom do agente"></textarea>
+            </label>
+          </div>
+          <div class="chat-history" id="chat-history"></div>
+          <form class="chat-form" id="chat-form">
+            <input type="text" id="chat-input" placeholder="Digite uma pergunta" autocomplete="off" />
+            <button type="submit">Enviar</button>
+          </form>
+          <p class="ai-note">Mensagens sao auditadas. Assuntos marcados como restritos serao bloqueados automaticamente.</p>
+        </section>
+      </main>
+    </div>
+
+    <div class="auth-overlay" id="auth-overlay">
+      <form class="auth-card" id="auth-form">
+        <div class="auth-brand">
+          <div class="logo-dot"></div>
+          <div>
+            <strong>Mural One</strong>
+            <span>Acesso protegido</span>
+          </div>
+        </div>
+        <label>
+          Usuario
+          <input type="text" id="username" required autocomplete="username" />
+        </label>
+        <label>
+          Senha
+          <input type="password" id="password" required autocomplete="current-password" />
+        </label>
+        <button type="submit">Entrar</button>
+        <p class="auth-error" id="auth-error"></p>
+        <p class="auth-info">Em caso de duvida contate a Gerencia.</p>
+      </form>
+    </div>
+
+    <noscript>
+      <div class="no-js">Ative o JavaScript para acessar o portal.</div>
+    </noscript>
+
+    <script src="app.js" type="module" defer></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const orb = document.getElementById('cursor-orb');
+        if (!orb) return;
+
+        document.addEventListener('pointermove', (event) => {
+          orb.style.left = `${event.clientX}px`;
+          orb.style.top = `${event.clientY}px`;
+        }, { passive: true });
+      });
+    </script>
+  </body>
+</html>

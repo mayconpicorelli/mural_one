@@ -22,37 +22,38 @@
         body: JSON.stringify({ username, password }),
       });
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          errorMessage.textContent = "Usuário ou senha inválidos.";
-          errorMessage.classList.remove("hidden");
-          return;
-        }
-        throw new Error("Erro ao comunicar com o servidor");
-      }
-
-      // Se o servidor devolver JSON, usamos; se não, consideramos sucesso
-      let data = null;
-      try {
-        data = await response.json();
-      } catch (_) {
-        data = null;
-      }
-
-      if (data && data.success === false) {
-        errorMessage.textContent =
-          data.message || "Usuário ou senha inválidos.";
+      if (response.status === 401) {
+        errorMessage.textContent = "Usuário ou senha inválidos.";
         errorMessage.classList.remove("hidden");
         return;
       }
 
-      // Sucesso: esconde o card de login e mostra o conteúdo
+      if (!response.ok) {
+        errorMessage.textContent = "Falha ao tentar fazer login.";
+        errorMessage.classList.remove("hidden");
+        return;
+      }
+
+      // Se a resposta for JSON, ok; se não, apenas ignoramos o corpo
+      try {
+        const data = await response.json();
+        if (data && data.success === false) {
+          errorMessage.textContent =
+            data.message || "Usuário ou senha inválidos.";
+          errorMessage.classList.remove("hidden");
+          return;
+        }
+      } catch (_) {
+        // resposta não é JSON (por exemplo, "Login OK") -> tratamos como sucesso
+      }
+
+      // Sucesso: esconde login e mostra conteúdo
       loginCard.classList.add("hidden");
       content.classList.remove("hidden");
     } catch (err) {
       console.error(err);
       errorMessage.textContent =
-        "Falha ao tentar fazer login. Tente novamente em instantes.";
+        "Falha ao tentar fazer login. Tente novamente.";
       errorMessage.classList.remove("hidden");
     }
   });

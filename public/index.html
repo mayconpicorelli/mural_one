@@ -2,183 +2,103 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Mural One - Portal interno</title>
+    <title>Mural One - Acesso protegido</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="page">
-      <!-- TELA DE LOGIN -->
-      <section id="login-screen" class="card card-login">
-        <header class="login-header">
-          <h1 class="login-title">Mural One</h1>
-          <p className="login-subtitle">Acesso protegido</p>
-        </header>
+    <div class="page">
+      <!-- CARD DE LOGIN -->
+      <div id="login-card" class="card login-card">
+        <h1 class="title">Mural One</h1>
+        <p class="subtitle">Acesso protegido</p>
 
         <form id="login-form" class="form">
-          <div class="form-group">
-            <label for="username">Usuário</label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              autocomplete="username"
-              required
-            />
-          </div>
+          <label for="username">Usuário</label>
+          <input
+            id="username"
+            type="text"
+            autocomplete="username"
+            placeholder="Digite seu usuário"
+          />
 
-          <div class="form-group">
-            <label for="password">Senha</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              required
-            />
-          </div>
+          <label for="password">Senha</label>
+          <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Digite sua senha"
+          />
 
-          <button type="submit" class="btn-primary full-width">
-            Entrar
-          </button>
-
-          <p id="login-message" class="feedback"></p>
-
-          <p class="hint">
-            Em caso de dúvida contate a Gerência de Tecnologia.
-          </p>
+          <button type="submit" class="btn-primary">Entrar</button>
+          <p id="login-message" class="form-message"></p>
         </form>
-      </section>
 
-      <!-- PORTAL INTERNO (UMA ÚNICA PÁGINA) -->
-      <section id="portal-screen" class="portal hidden">
+        <p class="hint">
+          Em caso de dúvida contate a Gerencia.
+        </p>
+      </div>
+
+      <!-- CARD PRINCIPAL (MURAL + CALENDÁRIO + GPT) -->
+      <div id="portal-card" class="card portal-card hidden">
         <header class="portal-header">
           <div>
-            <h1>Mural interno</h1>
-            <p>Portal interno da Picorelli Transportes.</p>
+            <h1 class="title">Mural interno</h1>
+            <p class="subtitle">Portal interno da Picorelli Transportes.</p>
           </div>
-          <button id="logout-btn" class="btn-outline">Sair</button>
+          <button
+            class="btn-secondary"
+            onclick="window.location.reload()"
+          >
+            Sair
+          </button>
         </header>
 
-        <section class="portal-grid">
-          <!-- COLUNA ESQUERDA: avisos + calendário -->
-          <div class="portal-column">
-            <section class="panel">
-              <h2>Parede de avisos</h2>
-              <p class="panel-subtitle">
-                Comunicados oficiais do RH, diretoria e demais setores.
-              </p>
+        <section class="section">
+          <h2>Parede de avisos</h2>
+          <p class="section-description">
+            Espaço reservado para comunicados oficiais do RH, diretoria e demais setores.
+          </p>
+          <ul id="avisos-list" class="cards-list">
+            <!-- preenchido pelo app.js a partir de data/content.json -->
+          </ul>
+        </section>
 
-              <div class="notice-list">
-                <article class="notice-card">
-                  <span class="notice-chip">RH</span>
-                  <h3 class="notice-title">
-                    Atualização de cadastro de dependentes
-                  </h3>
-                  <p class="notice-body">
-                    Colaboradores devem revisar os dados de dependentes até
-                    20/12. Em caso de dúvida, procure o RH.
-                  </p>
-                </article>
+        <section class="section">
+          <h2>Calendário operacional</h2>
+          <p class="section-description">
+            Feriados, folgas, plantões e indicação de unidades abertas/fechadas.
+          </p>
+          <ul id="calendario-list" class="cards-list">
+            <!-- preenchido pelo app.js a partir de data/content.json -->
+          </ul>
+        </section>
 
-                <article class="notice-card">
-                  <span class="notice-chip">Operação</span>
-                  <h3 class="notice-title">
-                    Uso obrigatório de crachá nas unidades
-                  </h3>
-                  <p class="notice-body">
-                    A partir de janeiro o uso de crachá será obrigatório em
-                    todas as unidades da Picorelli Transportes.
-                  </p>
-                </article>
+        <section class="section">
+          <h2>Agente GPT interno</h2>
+          <p class="section-description">
+            Área para conversar com o agente de IA conectado à base interna (via API do GPT).
+          </p>
 
-                <article class="notice-card">
-                  <span class="notice-chip">TI</span>
-                  <h3 class="notice-title">Portal Mural One em fase piloto</h3>
-                  <p class="notice-body">
-                    Esta é a primeira versão do portal interno. Sugestões podem
-                    ser enviadas para a Gerência de Tecnologia.
-                  </p>
-                </article>
-              </div>
-            </section>
+          <div class="chat-box">
+            <div id="chat-log" class="chat-log">
+              <!-- mensagens aparecem aqui -->
+            </div>
 
-            <section class="panel">
-              <h2>Calendário operacional</h2>
-              <p class="panel-subtitle">
-                Feriados, folgas e unidades abertas/fechadas.
-              </p>
+            <form id="chat-form" class="chat-form">
+              <input
+                id="chat-input"
+                type="text"
+                placeholder="Digite sua pergunta para o agente..."
+              />
+              <button type="submit" class="btn-primary">Enviar</button>
+            </form>
 
-              <table class="calendar-table">
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Descrição</th>
-                    <th>Unidades</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>25/12</td>
-                    <td>Feriado nacional - Natal</td>
-                    <td>Todas fechadas</td>
-                  </tr>
-                  <tr>
-                    <td>31/12</td>
-                    <td>Plantão de fim de ano</td>
-                    <td>
-                      Sede JF, BAR, SFL e RJ com equipes reduzidas
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>01/01</td>
-                    <td>Feriado nacional - Confraternização</td>
-                    <td>Todas fechadas</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <p class="panel-hint">
-                Versão inicial de exemplo. No futuro, este calendário poderá ser
-                alimentado automaticamente pelo RH.
-              </p>
-            </section>
-          </div>
-
-          <!-- COLUNA DIREITA: agente GPT -->
-          <div class="portal-column">
-            <section class="panel panel-chat">
-              <h2>Agente GPT interno</h2>
-              <p class="panel-subtitle">
-                Converse com o agente de IA sobre dúvidas internas, políticas e
-                processos.
-              </p>
-
-              <div id="chat-messages" class="chat-messages">
-                <div class="chat-bubble assistant">
-                  Olá! Sou o agente virtual interno da Picorelli Transportes.
-                  Como posso ajudar hoje?
-                </div>
-              </div>
-
-              <form id="chat-form" class="chat-form">
-                <input
-                  id="chat-input"
-                  type="text"
-                  placeholder="Digite sua pergunta..."
-                  autocomplete="off"
-                />
-                <button type="submit" class="btn-primary">
-                  Enviar
-                </button>
-              </form>
-
-              <p id="chat-status" class="chat-status"></p>
-            </section>
+            <p id="chat-status" class="chat-status"></p>
           </div>
         </section>
-      </section>
-    </main>
+      </div>
+    </div>
 
     <script src="app.js"></script>
   </body>

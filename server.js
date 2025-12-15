@@ -1,148 +1,147 @@
-// server.js
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
-require('dotenv').config();
+const helmet = require('helmet');
+const cors = require('cors');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Usuários permitidos (pode colocar depois em ALLOWED_USERS no .env se quiser)
-const VALID_USERS = (() => {
-  const raw = process.env.ALLOWED_USERS || 'Admin:SenhaForte123';
-  return raw.split(',').map(pair => {
-    const [username, password] = pair.split(':');
-    return {
-      username: (username || '').trim(),
-      password: (password || '').trim(),
-    };
-  }).filter(u => u.username && u.password);
-})();
-
-// Temas sensíveis que o agente não deve tratar
-const BLOCKED_TOPICS = (process.env.BLOCKED_TOPICS || '')
+// ---------- LOGIN SIMPLES COM USUÁRIOS DO .ENV ----------
+const rawUsers = process.env.ALLOWED_USERS || '';
+const ALLOWED_USERS = rawUsers
   .split(',')
-  .map(t => t.trim().toLowerCase())
+  .map((pair) => {
+    const [user, pass] = pair.split(':');
+    return user && pass ? { user: user.trim(), pass: pass.trim() } : null;
+  })
   .filter(Boolean);
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4.1-mini';
-const GPT_SYSTEM_PROMPT =
-  process.env.GPT_SYSTEM_PROMPT ||
-  'Você é o assistente virtual interno da Picorelli Transportes. Responda de forma educada, objetiva e profissional.';
+function isValidUser(username, password) {
+  return ALLOWED_USERS.some(
+    (u) => u.user === username && u.pass === password
+  );
+}
 
-// Middlewares
+// ---------- MIDDLEWARES ----------
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
+
+// arquivos estáticos (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ------------- LOGIN -------------
+// ---------- ROTAS DE API ----------
+
+// Login
 app.post('/api/login', (req, res) => {
+  const { username, password } = req.body || {};
+
+  if (!username || !password) {
+    return res
+      .status(400)
+      .json({ success: false, message: 'Usuário e senha são obrigatórios.' });
+  }
+
+  if (!isValidUser(username, password)) {
+    return res
+      .status(401)
+      .json({ success: false, message: 'Usuário ou senha inválidos.' });
+  }
+
+  // Sem sessão real por enquanto: frontend só usa esse "ok"
+  return res.json({
+    success: true,
+    user: { name: username }
+  });
+});
+
+// Conteúdo do mural (avisos + calendário) vindo de data/content.json
+app.get('/api/content', (req, res) => {
   try {
-    const { username, password } = req.body || {};
-
-    if (!username || !password) {
-      return res.status(400).json({
-        ok: false,
-        message: 'Informe usuário e senha.',
-      });
-    }
-
-    const isValid = VALID_USERS.some(
-      u => u.username === username && u.password === password
-    );
-
-    if (!isValid) {
-      return res.status(401).json({
-        ok: false,
-        message: 'Usuário ou senha inválidos.',
-      });
-    }
-
-    // Aqui poderíamos criar sessão/cookie.
-    // Para simplificar, apenas avisamos o front que está tudo certo.
-    return res.json({ ok: true, message: 'Login realizado com sucesso.' });
+    const contentPath = path.join(__dirname, 'data', 'content.json');
+    const raw = fs.readFileSync(contentPath, 'utf8');
+    const data = JSON.parse(raw);
+    res.json(data);
   } catch (err) {
-    console.error('Erro em /api/login:', err);
-    return res.status(500).json({
-      ok: false,
-      message: 'Erro interno ao validar login.',
-    });
+    console.error('Erro ao ler content.json:', err);
+    res.status(500).json({ error: 'Erro ao carregar conteúdo do mural.' });
   }
 });
 
-// ------------- AGENTE GPT -------------
+// Chat com GPT usando fetch nativo (Node 18+)
 app.post('/api/chat', async (req, res) => {
   try {
-    const { message } = req.body || {};
-
-    if (!message || !message.trim()) {
-      return res.status(400).json({
-        ok: false,
-        message: 'Mensagem vazia.',
-      });
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return res
+        .status(500)
+        .json({ error: 'OPENAI_API_KEY não configurada no servidor.' });
     }
 
-    if (!OPENAI_API_KEY) {
-      console.error('OPENAI_API_KEY não configurada no ambiente.');
-      return res.status(500).json({
-        ok: false,
-        message: 'API de IA não está configurada. Contate a Gerência de Tecnologia.',
-      });
+    const { message, history } = req.body || {};
+    if (!message) {
+      return res
+        .status(400)
+        .json({ error: 'Mensagem é obrigatória.' });
     }
 
-    const lower = message.toLowerCase();
-    if (BLOCKED_TOPICS.length && BLOCKED_TOPICS.some(t => lower.includes(t))) {
-      return res.json({
-        ok: true,
-        answer:
-          'Este assunto é sensível para a empresa. Procure diretamente o RH ou seu gestor para tratar desse tema.',
-      });
-    }
+    const systemPrompt =
+      process.env.GPT_SYSTEM_PROMPT ||
+      'Você é o assistente virtual interno da Picorelli Transportes. Responda de forma objetiva, profissional e focada nas rotinas da empresa.';
+
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      ...(Array.isArray(history) ? history : []),
+      { role: 'user', content: message }
+    ];
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: OPENAI_MODEL,
-        messages: [
-          { role: 'system', content: GPT_SYSTEM_PROMPT },
-          { role: 'user', content: message },
-        ],
-      }),
+        model: process.env.OPENAI_MODEL || 'gpt-4.1-mini',
+        messages,
+        temperature: 0.3
+      })
     });
 
     if (!response.ok) {
       const text = await response.text();
-      console.error('Erro na OpenAI:', response.status, text);
-      return res.status(502).json({
-        ok: false,
-        message: 'Erro ao conversar com o agente de IA. Tente novamente em alguns instantes.',
-      });
+      console.error('Erro OpenAI:', response.status, text);
+      return res
+        .status(502)
+        .json({ error: 'Erro ao comunicar com o agente de IA.' });
     }
 
     const data = await response.json();
-    const answer =
-      data.choices?.[0]?.message?.content?.trim() ||
-      'Não consegui gerar uma resposta no momento. Tente novamente.';
+    const reply =
+      data.choices?.[0]?.message?.content ||
+      'Não foi possível gerar uma resposta no momento.';
 
-    return res.json({ ok: true, answer });
-  } catch (err) {
-    console.error('Erro em /api/chat:', err);
-    return res.status(500).json({
-      ok: false,
-      message: 'Erro interno ao processar a mensagem.',
-    });
+    res.json({ reply });
+  } catch (error) {
+    console.error('Erro em /api/chat:', error);
+    res.status(500).json({ error: 'Erro interno no servidor.' });
   }
 });
 
-// ------------- FRONTEND (SPA em uma página) -------------
-app.get('*', (req, res) => {
+// Rota principal (devolve index.html)
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ------------- START -------------
+// Healthcheck
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// ---------- INICIAR SERVIDOR ----------
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor Mural One rodando na porta ${PORT}`);
 });

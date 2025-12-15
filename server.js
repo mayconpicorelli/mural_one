@@ -1,70 +1,44 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const helmet = require('helmet');
-const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Monta mapa de usuários permitidos a partir do .env
-function parseAllowedUsers(envValue) {
-  return (envValue || '')
-    .split(',')
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .reduce((acc, pair) => {
-      const [user, pass] = pair.split(':');
-      if (user && pass) acc[user] = pass;
-      return acc;
-    }, {});
-}
-
-const allowedUsers =
-  parseAllowedUsers(process.env.ALLOWED_USERS) || { Admin: 'SenhaForte123' };
-
-app.use(helmet());
-app.use(cors());
+// Middlewares básicos
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Arquivos estáticos
+// Servir arquivos estáticos da pasta "public"
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Login simples (sem sessão de servidor, só validação)
-app.post('/api/login', (req, res) => {
-  const { username, password } = req.body || {};
+// Login super simples: usuário/senha fixos
+// (depois podemos ligar isso ao .env ou a um banco)
+const VALID_USERS = {
+  Admin: 'SenhaForte123', // ajuste aqui se quiser outra senha
+};
 
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ success: false, message: 'Usuário e senha são obrigatórios.' });
+// Rota de login: recebe JSON { username, password }
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  if (VALID_USERS[username] && VALID_USERS[username] === password) {
+    return res.json({ success: true });
   }
 
-  const stored = allowedUsers[username];
-  if (!stored || stored !== password) {
-    return res
-      .status(401)
-      .json({ success: false, message: 'Usuário ou senha inválidos.' });
-  }
-
-  return res.json({ success: true });
+  return res.status(401).json({
+    success: false,
+    message: 'Usuário ou senha inválidos.',
+  });
 });
 
-// Logout “fake” (apenas para manter a API consistente)
-app.post('/api/logout', (req, res) => {
-  return res.json({ success: true });
-});
-
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-// Rota raiz
+// Rota principal: sempre entrega o index.html
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Inicia o servidor
 app.listen(PORT, () => {
-  console.log(`Mural One rodando na porta ${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });

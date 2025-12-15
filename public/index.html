@@ -1,71 +1,211 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <title>Mural One - Acesso protegido</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="page">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mural One - Acesso protegido</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Tela de LOGIN -->
+    <div id="login-screen" class="screen screen-visible">
+      <div class="card login-card">
+        <h1 class="app-title">Mural One</h1>
+        <p className="subtitle">Acesso protegido</p>
 
-    <!-- TELA DE LOGIN -->
-    <section id="loginSection" class="login-card">
-      <h1 class="app-title">Mural One</h1>
-      <p class="app-subtitle">Acesso protegido</p>
+        <form id="login-form" class="login-form">
+          <label for="username">Usuário</label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autocomplete="username"
+            required
+            value="Admin"
+          />
 
-      <form id="loginForm" class="login-form">
-        <label for="username">Usuário</label>
-        <input id="username" name="username" type="text" autocomplete="username" required />
+          <label for="password">Senha</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
 
-        <label for="password">Senha</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required />
+          <button type="submit" class="btn-primary">Entrar</button>
+        </form>
 
-        <button type="submit" class="primary-button">Entrar</button>
-      </form>
+        <p id="login-message" class="login-message"></p>
 
-      <p id="loginStatus" class="login-status"></p>
-      <p class="login-help">Em caso de dúvida contate a Gerencia.</p>
-    </section>
+        <p class="help-text">
+          Em caso de dúvida contate a Gerencia.
+        </p>
+      </div>
+    </div>
 
-    <!-- APLICAÇÃO APÓS LOGIN -->
-    <section id="appSection" class="app-shell hidden">
-      <header class="app-header">
-        <div>
-          <h1 class="app-title">Mural interno</h1>
-          <p class="app-subtitle">Portal interno da Picorelli Transportes.</p>
-        </div>
-        <button id="logoutButton" class="secondary-button">Sair</button>
-      </header>
+    <!-- Tela INTERNA do Mural -->
+    <div id="mural-screen" class="screen screen-hidden">
+      <div class="card mural-card">
+        <header class="mural-header">
+          <div>
+            <h1 class="app-title">Mural interno</h1>
+            <p class="subtitle">Portal interno da Picorelli Transportes.</p>
+          </div>
+          <button id="logout-button" class="btn-outline">Sair</button>
+        </header>
 
-      <div class="app-layout">
-        <nav class="app-menu">
-          <button class="menu-item active" data-section="board">
-            <span class="menu-title">Parede de avisos</span>
-            <span class="menu-description">Comunicados oficiais e avisos gerais.</span>
-          </button>
+        <main class="mural-main">
+          <!-- Menu lateral -->
+          <nav class="mural-menu">
+            <button
+              class="menu-item active"
+              data-section="avisos"
+            >
+              <span class="menu-title">Parede de avisos</span>
+              <span class="menu-subtitle">
+                Comunicados oficiais e avisos gerais.
+              </span>
+            </button>
 
-          <button class="menu-item" data-section="calendar">
-            <span class="menu-title">Calendário operacional</span>
-            <span class="menu-description">Feriados, folgas e unidades abertas/fechadas.</span>
-          </button>
+            <button
+              class="menu-item"
+              data-section="calendario"
+            >
+              <span class="menu-title">Calendário operacional</span>
+              <span class="menu-subtitle">
+                Feriados, folgas e unidades abertas/fechadas.
+              </span>
+            </button>
 
-          <button class="menu-item" data-section="gpt">
-            <span class="menu-title">Agente GPT interno</span>
-            <span class="menu-description">Área reservada para o agente de IA.</span>
-          </button>
-        </nav>
+            <button
+              class="menu-item"
+              data-section="gpt"
+            >
+              <span class="menu-title">Agente GPT interno</span>
+              <span class="menu-subtitle">
+                Área de IA conectada à base interna.
+              </span>
+            </button>
+          </nav>
 
-        <main id="appContent" class="app-content">
-          <!-- O conteúdo das seções é preenchido via JavaScript -->
+          <!-- Área principal de conteúdo -->
+          <section class="mural-content">
+            <!-- Seção PAREDE DE AVISOS -->
+            <div
+              id="section-avisos"
+              class="content-section section-visible"
+            >
+              <h2>Parede de avisos</h2>
+              <p class="section-description">
+                Espaço reservado para comunicados oficiais do RH, diretoria
+                e demais setores. Estes textos podem ser alimentados
+                manualmente ou via arquivo JSON futuramente.
+              </p>
+
+              <div class="notice-list">
+                <article class="notice-item">
+                  <span class="notice-tag aviso-rh">RH</span>
+                  <h3>Atualização de cadastro de dependentes</h3>
+                  <p>
+                    Colaboradores devem revisar os dados de dependentes até
+                    20/12. Em caso de dúvida, procure o RH.
+                  </p>
+                </article>
+
+                <article class="notice-item">
+                  <span class="notice-tag aviso-operacional">Operação</span>
+                  <h3>Uso obrigatório de crachá nas unidades</h3>
+                  <p>
+                    A partir de janeiro o uso de crachá será obrigatório em
+                    todas as unidades da Picorelli Transportes.
+                  </p>
+                </article>
+
+                <article class="notice-item">
+                  <span class="notice-tag aviso-ti">TI</span>
+                  <h3>Portal Mural One em fase piloto</h3>
+                  <p>
+                    Esta é a primeira versão do portal interno. Sugestões podem
+                    ser enviadas para a Gerencia de Tecnologia.
+                  </p>
+                </article>
+              </div>
+            </div>
+
+            <!-- Seção CALENDÁRIO OPERACIONAL -->
+            <div
+              id="section-calendario"
+              class="content-section section-hidden"
+            >
+              <h2>Calendário operacional</h2>
+              <p class="section-description">
+                Visão geral de feriados, folgas e status das unidades. Os dados
+                abaixo são apenas exemplos; depois podemos ligar isso ao SSW
+                ou a um arquivo de configuração.
+              </p>
+
+              <div class="calendar-wrapper">
+                <div class="calendar-header">
+                  <button id="prev-month" class="btn-ghost">&#8249;</button>
+                  <h3 id="calendar-title"></h3>
+                  <button id="next-month" class="btn-ghost">&#8250;</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                  <!-- preenchido via JS -->
+                </div>
+              </div>
+
+              <div class="holiday-panel">
+                <h3>Feriados e datas importantes</h3>
+                <ul id="holiday-list">
+                  <!-- preenchido via JS (exemplos) -->
+                </ul>
+              </div>
+            </div>
+
+            <!-- Seção AGENTE GPT INTERNO -->
+            <div
+              id="section-gpt"
+              class="content-section section-hidden"
+            >
+              <h2>Agente GPT interno</h2>
+              <p class="section-description">
+                Área reservada para o agente de IA conectado à base interna
+                da empresa. Aqui ficará o chat com o assistente.
+              </p>
+
+              <div class="chat-wrapper">
+                <div id="chat-history" class="chat-history">
+                  <div class="chat-message chat-message-system">
+                    Integração com o agente GPT ainda não foi concluída
+                    nesta versão. Esta área é apenas o layout do chat.
+                  </div>
+                </div>
+
+                <form id="chat-form" class="chat-form">
+                  <input
+                    id="chat-input"
+                    type="text"
+                    placeholder="Digite sua pergunta para o agente interno..."
+                    autocomplete="off"
+                  />
+                  <button type="submit" class="btn-primary">
+                    Enviar
+                  </button>
+                </form>
+
+                <p class="chat-warning">
+                  Por enquanto este chat é somente ilustrativo. A conexão com
+                  a API do GPT será configurada depois.
+                </p>
+              </div>
+            </div>
+          </section>
         </main>
       </div>
-    </section>
+    </div>
 
-  </div>
-
-  <script src="app.js" defer></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
-
-

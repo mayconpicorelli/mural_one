@@ -3,14 +3,97 @@
   <head>
     <meta charset="UTF-8" />
     <title>Mural One - Acesso protegido</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div id="app"></div>
+    <div class="page">
+      <!-- SEÇÃO DE LOGIN -->
+      <section id="loginSection" class="card">
+        <h1 class="app-title">Mural One</h1>
+        <p class="subtitle">Acesso protegido</p>
+
+        <form id="loginForm" class="login-form">
+          <label for="username">Usuário</label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autocomplete="username"
+            required
+          />
+
+          <label for="password">Senha</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+
+          <button type="submit" class="primary-button">
+            Entrar
+          </button>
+
+          <p id="loginMessage" class="login-message"></p>
+        </form>
+
+        <p class="help-text">
+          Em caso de dúvida contate a Gerência.
+        </p>
+      </section>
+
+      <!-- SEÇÃO INTERNA DO MURAL -->
+      <section id="appSection" class="card hidden">
+        <header class="app-header">
+          <div>
+            <h2>Mural interno</h2>
+            <p class="subtitle">
+              Portal interno da Picorelli Transportes.
+            </p>
+          </div>
+
+          <button id="logoutButton" class="secondary-button">
+            Sair
+          </button>
+        </header>
+
+        <main class="app-content">
+          <section class="app-block">
+            <h3>Parede de avisos</h3>
+            <p>
+              Espaço reservado para comunicados oficiais do RH,
+              diretoria e demais setores.
+            </p>
+          </section>
+
+          <section class="app-block">
+            <h3>Calendário operacional</h3>
+            <p>
+              Aqui ficará o calendário com feriados, plantões e
+              unidades abertas/fechadas.
+            </p>
+          </section>
+
+          <section class="app-block">
+            <h3>Agente GPT interno</h3>
+            <p>
+              Área reservada para o agente de IA conectado à base
+              interna da empresa.
+            </p>
+          </section>
+        </main>
+      </section>
+    </div>
+
     <script src="app.js"></script>
   </body>
 </html>
+
 
 
 

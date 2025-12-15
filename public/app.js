@@ -1,78 +1,75 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
-  const app = document.getElementById('app');
+  const loginSection = document.getElementById('loginSection');
+  const appSection = document.getElementById('appSection');
+  const loginForm = document.getElementById('loginForm');
+  const loginMessage = document.getElementById('loginMessage');
+  const logoutButton = document.getElementById('logoutButton');
 
-  // Monta o layout do login
-  app.innerHTML = `
-    <div class="page">
-      <div class="card">
-        <h1 class="title">Mural One</h1>
-        <p class="subtitle">Acesso protegido</p>
+  if (!loginForm) {
+    console.error('Formulário de login não encontrado no DOM.');
+    return;
+  }
 
-        <form id="login-form">
-          <label for="username">Usuário</label>
-          <input id="username" type="text" autocomplete="username" />
+  loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-          <label for="password">Senha</label>
-          <input id="password" type="password" autocomplete="current-password" />
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
 
-          <button type="submit">Entrar</button>
-        </form>
-
-        <div id="message" class="message"></div>
-
-        <p class="footer-text">
-          Em caso de dúvida contate a Gerencia.
-        </p>
-      </div>
-    </div>
-  `;
-
-  const form = document.getElementById('login-form');
-  const messageEl = document.getElementById('message');
-  const userInput = document.getElementById('username');
-  const passInput = document.getElementById('password');
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    messageEl.textContent = '';
-    messageEl.className = 'message';
-
-    const username = userInput.value.trim();
-    const password = passInput.value.trim();
-
-    if (!username || !password) {
-      messageEl.textContent = 'Informe usuário e senha.';
-      messageEl.classList.add('error');
-      return;
-    }
+    loginMessage.textContent = 'Validando credenciais...';
+    loginMessage.className = 'login-message login-message--info';
 
     try {
-      const resp = await fetch('/api/login', {
+      const response = await fetch('/api/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await resp.json().catch(() => null);
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (e) {
+        console.error('Erro ao ler JSON do login:', e);
+      }
 
-      if (!resp.ok) {
-        messageEl.textContent =
-          (data && data.message) || 'Usuário ou senha inválidos.';
-        messageEl.classList.add('error');
+      if (!response.ok || !data || !data.ok) {
+        const msg =
+          (data && data.message) ||
+          'Usuário ou senha inválidos. Verifique e tente novamente.';
+        loginMessage.textContent = msg;
+        loginMessage.className = 'login-message login-message--error';
         return;
       }
 
       // Sucesso
-      messageEl.textContent = 'Login realizado com sucesso.';
-      messageEl.classList.add('success');
+      loginMessage.textContent = 'Login realizado com sucesso.';
+      loginMessage.className = 'login-message login-message--success';
 
-      // Aqui no futuro você substitui pelo mural de avisos / IA etc.
-    } catch (err) {
-      console.error(err);
-      messageEl.textContent =
-        'Erro ao contatar o servidor. Tente novamente em instantes.';
-      messageEl.classList.add('error');
+      // Troca de tela: esconde login, mostra mural
+      loginSection.classList.add('hidden');
+      appSection.classList.remove('hidden');
+    } catch (error) {
+      console.error('Erro na requisição de login:', error);
+      loginMessage.textContent =
+        'Erro ao conectar com o servidor. Tente novamente em alguns instantes.';
+      loginMessage.className = 'login-message login-message--error';
     }
   });
-});
 
+  if (logoutButton) {
+    logoutButton.addEventListener('click', () => {
+      // Limpa campos
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      loginMessage.textContent = '';
+      loginMessage.className = 'login-message';
+
+      // Volta para a tela de login
+      appSection.classList.add('hidden');
+      loginSection.classList.remove('hidden');
+    });
+  }
+});

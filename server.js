@@ -52,10 +52,11 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-// Qualquer outra rota -> index.html (SPA simples)
-app.get('*', (req, res) => {
+// Rota principal -> index.html
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
 
 // Sobe o servidor
 app.listen(PORT, () => {

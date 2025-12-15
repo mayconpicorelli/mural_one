@@ -1,58 +1,60 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <title>Mural One - Acesso protegido</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="page">
-    <!-- BLOCO DE LOGIN -->
-    <div id="login-container" class="card">
-      <h1>Mural One</h1>
-      <p class="subtitle">Acesso protegido</p>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mural One - Acesso interno</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- O app.js cuida do login -->
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <div class="page">
+      <div class="login-card">
+        <h1 class="app-title">Mural One</h1>
+        <p class="subtitle">Acesso protegido</p>
 
-      <form id="login-form">
-        <div class="form-group">
-          <label for="username">Usuário</label>
-          <input type="text" id="username" name="username" autocomplete="username" />
-        </div>
+        <form id="login-form">
+          <div class="field">
+            <label for="username">Usuário</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              autocomplete="username"
+              required
+            />
+          </div>
 
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input type="password" id="password" name="password" autocomplete="current-password" />
-        </div>
+          <div class="field">
+            <label for="password">Senha</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
 
-        <button type="submit" class="btn-primary">Entrar</button>
+          <button type="submit" class="primary-button">Entrar</button>
 
-        <p id="login-error" class="error-message"></p>
+          <p id="login-error" class="error-message hidden">
+            Usuário ou senha inválidos.
+          </p>
+        </form>
 
         <p class="help-text">
           Em caso de dúvida contate a Gerencia.
         </p>
-      </form>
-    </div>
-
-    <!-- BLOCO APLICACAO (APARECE APÓS LOGIN) -->
-    <div id="app-container" class="card" style="display: none;">
-      <div class="top-bar">
-        <div>
-          <h1>Mural One</h1>
-          <p>Bem-vindo, <span id="user-name">Usuário</span>!</p>
-        </div>
-        <button id="btn-logout" class="btn-secondary">Sair</button>
       </div>
 
-      <hr />
-
-      <p>
-        Você está logado no mural interno.
-        Aqui depois vamos carregar os avisos, calendário e o chat com IA.
-      </p>
+      <!-- Área do mural após login (por enquanto um placeholder) -->
+      <div id="content" class="content hidden">
+        <h2>Bem-vindo ao Mural One</h2>
+        <p>O conteúdo interno será exibido aqui depois do login.</p>
+      </div>
     </div>
-  </div>
-
-  <script src="app.js"></script>
-</body>
+  </body>
 </html>
+

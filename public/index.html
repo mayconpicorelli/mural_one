@@ -1,99 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Mural One - Acesso protegido</title>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="page">
-      <!-- SEÇÃO DE LOGIN -->
-      <section id="loginSection" class="card">
-        <h1 class="app-title">Mural One</h1>
-        <p class="subtitle">Acesso protegido</p>
+<head>
+  <meta charset="UTF-8" />
+  <title>Mural One - Acesso protegido</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
 
-        <form id="loginForm" class="login-form">
-          <label for="username">Usuário</label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            autocomplete="username"
-            required
-          />
+    <!-- TELA DE LOGIN -->
+    <section id="loginSection" class="login-card">
+      <h1 class="app-title">Mural One</h1>
+      <p class="app-subtitle">Acesso protegido</p>
 
-          <label for="password">Senha</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autocomplete="current-password"
-            required
-          />
+      <form id="loginForm" class="login-form">
+        <label for="username">Usuário</label>
+        <input id="username" name="username" type="text" autocomplete="username" required />
 
-          <button type="submit" class="primary-button">
-            Entrar
+        <label for="password">Senha</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+
+        <button type="submit" class="primary-button">Entrar</button>
+      </form>
+
+      <p id="loginStatus" class="login-status"></p>
+      <p class="login-help">Em caso de dúvida contate a Gerencia.</p>
+    </section>
+
+    <!-- APLICAÇÃO APÓS LOGIN -->
+    <section id="appSection" class="app-shell hidden">
+      <header class="app-header">
+        <div>
+          <h1 class="app-title">Mural interno</h1>
+          <p class="app-subtitle">Portal interno da Picorelli Transportes.</p>
+        </div>
+        <button id="logoutButton" class="secondary-button">Sair</button>
+      </header>
+
+      <div class="app-layout">
+        <nav class="app-menu">
+          <button class="menu-item active" data-section="board">
+            <span class="menu-title">Parede de avisos</span>
+            <span class="menu-description">Comunicados oficiais e avisos gerais.</span>
           </button>
 
-          <p id="loginMessage" class="login-message"></p>
-        </form>
-
-        <p class="help-text">
-          Em caso de dúvida contate a Gerência.
-        </p>
-      </section>
-
-      <!-- SEÇÃO INTERNA DO MURAL -->
-      <section id="appSection" class="card hidden">
-        <header class="app-header">
-          <div>
-            <h2>Mural interno</h2>
-            <p class="subtitle">
-              Portal interno da Picorelli Transportes.
-            </p>
-          </div>
-
-          <button id="logoutButton" class="secondary-button">
-            Sair
+          <button class="menu-item" data-section="calendar">
+            <span class="menu-title">Calendário operacional</span>
+            <span class="menu-description">Feriados, folgas e unidades abertas/fechadas.</span>
           </button>
-        </header>
 
-        <main class="app-content">
-          <section class="app-block">
-            <h3>Parede de avisos</h3>
-            <p>
-              Espaço reservado para comunicados oficiais do RH,
-              diretoria e demais setores.
-            </p>
-          </section>
+          <button class="menu-item" data-section="gpt">
+            <span class="menu-title">Agente GPT interno</span>
+            <span class="menu-description">Área reservada para o agente de IA.</span>
+          </button>
+        </nav>
 
-          <section class="app-block">
-            <h3>Calendário operacional</h3>
-            <p>
-              Aqui ficará o calendário com feriados, plantões e
-              unidades abertas/fechadas.
-            </p>
-          </section>
-
-          <section class="app-block">
-            <h3>Agente GPT interno</h3>
-            <p>
-              Área reservada para o agente de IA conectado à base
-              interna da empresa.
-            </p>
-          </section>
+        <main id="appContent" class="app-content">
+          <!-- O conteúdo das seções é preenchido via JavaScript -->
         </main>
-      </section>
-    </div>
+      </div>
+    </section>
 
-    <script src="app.js"></script>
-  </body>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
 </html>
-
-
 
 

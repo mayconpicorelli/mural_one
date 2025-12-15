@@ -2,58 +2,15 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Mural One - Acesso interno</title>
+    <title>Mural One - Acesso protegido</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-    <script defer src="app.js"></script>
   </head>
   <body>
-    <div class="page">
-      <div class="login-card">
-        <h1 class="app-title">Mural One</h1>
-        <p class="subtitle">Acesso protegido</p>
-
-        <form id="login-form">
-          <div class="field">
-            <label for="username">Usuário</label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              autocomplete="username"
-              required
-            />
-          </div>
-
-          <div class="field">
-            <label for="password">Senha</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              required
-            />
-          </div>
-
-          <button type="submit" class="primary-button">Entrar</button>
-
-          <p id="login-error" class="error-message hidden">
-            Usuário ou senha inválidos.
-          </p>
-        </form>
-
-        <p class="help-text">
-          Em caso de dúvida contate a Gerencia.
-        </p>
-      </div>
-
-      <div id="content" class="content hidden">
-        <h2>Bem-vindo ao Mural One</h2>
-        <p>O conteúdo interno será exibido aqui depois do login.</p>
-      </div>
-    </div>
+    <div id="app"></div>
+    <script src="app.js"></script>
   </body>
 </html>
+
 
 

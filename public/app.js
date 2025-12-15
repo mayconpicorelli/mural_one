@@ -1,64 +1,164 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("login-form");
-  const usernameInput = document.getElementById("username");
-  const passwordInput = document.getElementById("password");
-  const errorMessage = document.getElementById("login-error");
-  const loginCard = document.querySelector(".login-card");
-  const content = document.getElementById("content");
+﻿// public/app.js
 
-  loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    errorMessage.classList.add("hidden");
+document.addEventListener('DOMContentLoaded', () => {
+  const app = document.getElementById('app');
 
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value;
+  function renderLogin() {
+    app.innerHTML = `
+      <div class="page">
+        <div class="card">
+          <div class="card-left">
+            <div class="highlight">
+              <span class="highlight-dot"></span>
+              Acesso exclusivo para colaboradores Picorelli
+            </div>
+            <h1 class="logo-title">Mural One</h1>
+            <p class="subtitle">
+              Portal interno com mural de avisos, calendário operacional e agente de IA.
+            </p>
+            <ul>
+              <li>Informações atualizadas das unidades.</li>
+              <li>Comunicados oficiais e documentos importantes.</li>
+              <li>Acesso ao assistente virtual treinado na realidade da empresa.</li>
+            </ul>
+            <p class="help-text">
+              Em caso de dúvida, contate a Gerência de Tecnologia.
+            </p>
+          </div>
 
-    try {
-      const response = await fetch("/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
+          <div class="card-right">
+            <h2>Acesso protegido</h2>
+            <p>Use seu usuário e senha autorizados para entrar.</p>
 
-      if (response.status === 401) {
-        errorMessage.textContent = "Usuário ou senha inválidos.";
-        errorMessage.classList.remove("hidden");
+            <form id="login-form">
+              <div class="form-group">
+                <label for="username">Usuário</label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  autocomplete="username"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="password">Senha</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                />
+              </div>
+
+              <button type="submit" id="login-button">Entrar</button>
+              <div id="login-error" class="login-error" style="display:none;"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const form = document.getElementById('login-form');
+    const errorDiv = document.getElementById('login-error');
+    const button = document.getElementById('login-button');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      errorDiv.style.display = 'none';
+      errorDiv.textContent = '';
+
+      if (!username || !password) {
+        errorDiv.textContent = 'Preencha usuário e senha.';
+        errorDiv.style.display = 'block';
         return;
       }
 
-      if (!response.ok) {
-        errorMessage.textContent = "Falha ao tentar fazer login.";
-        errorMessage.classList.remove("hidden");
-        return;
-      }
+      button.disabled = true;
 
-      // Se a resposta for JSON, ok; se não, apenas ignoramos o corpo
       try {
-        const data = await response.json();
-        if (data && data.success === false) {
-          errorMessage.textContent =
-            data.message || "Usuário ou senha inválidos.";
-          errorMessage.classList.remove("hidden");
-          return;
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+
+        let data;
+        try {
+          data = await response.json();
+        } catch (e) {
+          console.error('Falha ao interpretar JSON do servidor:', e);
+          throw new Error('Resposta do servidor não está em JSON.');
         }
-      } catch (_) {
-        // resposta não é JSON (por exemplo, "Login OK") -> tratamos como sucesso
+
+        if (!data || typeof data.success !== 'boolean') {
+          throw new Error('Formato de resposta inesperado.');
+        }
+
+        if (data.success) {
+          renderMural();
+        } else {
+          errorDiv.textContent =
+            data.message || 'Usuário ou senha inválidos.';
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) {
+        console.error('Erro na requisição /login:', err);
+        errorDiv.textContent =
+          'Resposta inválida do servidor. Tente novamente em instantes.';
+        errorDiv.style.display = 'block';
+      } finally {
+        button.disabled = false;
       }
+    });
+  }
 
-      // Sucesso: esconde login e mostra conteúdo
-      loginCard.classList.add("hidden");
-      content.classList.remove("hidden");
-    } catch (err) {
-      console.error(err);
-      errorMessage.textContent =
-        "Falha ao tentar fazer login. Tente novamente.";
-      errorMessage.classList.remove("hidden");
-    }
-  });
+  function renderMural() {
+    app.innerHTML = `
+      <div class="page">
+        <div class="mural-wrapper">
+          <div class="mural-header">
+            <div>
+              <h1 class="mural-title">Mural One</h1>
+              <p class="mural-subtitle">
+                Acesso liberado. Em breve: avisos, calendário e agente GPT integrados.
+              </p>
+            </div>
+          </div>
+
+          <div class="mural-grid">
+            <section class="panel">
+              <h3>Parede de avisos</h3>
+              <p>
+                Espaço reservado para comunicados internos do RH,
+                operações e diretoria. Aqui ficarão os cards com avisos
+                e links importantes.
+              </p>
+            </section>
+
+            <section class="panel">
+              <h3>Próximos passos</h3>
+              <p>
+                Nesta primeira versão, apenas o login está ativo.
+                Nas próximas iterações vamos conectar o calendário,
+                mural dinâmico e o agente de IA oficial da Picorelli.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Inicia mostrando o login
+  renderLogin();
 });
-
 
 
 

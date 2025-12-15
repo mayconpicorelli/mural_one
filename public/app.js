@@ -1,274 +1,252 @@
 ﻿// public/app.js
 
-// Utilitário: mostrar/esconder telas
-function showScreen(screenIdToShow) {
-  const screens = document.querySelectorAll('.screen');
-  screens.forEach((el) => el.classList.add('screen-hidden'));
-  screens.forEach((el) => el.classList.remove('screen-visible'));
+document.addEventListener("DOMContentLoaded", () => {
+  setupLogin();
+  setupCalendar();
+  setupChat();
+});
 
-  const screen = document.getElementById(screenIdToShow);
-  if (screen) {
-    screen.classList.remove('screen-hidden');
-    screen.classList.add('screen-visible');
-  }
-}
-
-// ---------- LOGIN ----------
 function setupLogin() {
-  const form = document.getElementById('login-form');
-  const message = document.getElementById('login-message');
+  const loginContainer = document.getElementById("login-container");
+  const portalContainer = document.getElementById("portal-container");
+  const loginForm = document.getElementById("login-form");
+  const loginMessage = document.getElementById("login-message");
+  const logoutBtn = document.getElementById("logout-btn");
 
-  if (!form) return;
+  if (!loginForm || !loginContainer || !portalContainer) return;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-    message.textContent = 'Validando...';
-    message.className = 'login-message';
+    loginMessage.textContent = "Validando acesso...";
+    loginMessage.className = "login-message";
 
     try {
-      const res = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        message.textContent = data.message || 'Usuário ou senha inválidos.';
-        message.className = 'login-message error';
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success) {
+        loginMessage.textContent =
+          data.message || "Usuário ou senha inválidos.";
+        loginMessage.classList.add("error");
         return;
       }
 
-      message.textContent = 'Login realizado com sucesso.';
-      message.className = 'login-message success';
+      loginMessage.textContent =
+        data.message || "Login realizado com sucesso.";
+      loginMessage.classList.add("success");
 
-      // Marca login simples no navegador
-      localStorage.setItem('muralOneLoggedIn', 'true');
-
-      // Mostra o mural após um pequeno delay
       setTimeout(() => {
-        showScreen('mural-screen');
+        loginContainer.classList.add("hidden");
+        portalContainer.classList.remove("hidden");
+        loginMessage.textContent = "";
       }, 500);
-    } catch (err) {
-      console.error(err);
-      message.textContent = 'Erro ao comunicar com o servidor.';
-      message.className = 'login-message error';
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      loginMessage.textContent = "Erro ao conectar ao servidor.";
+      loginMessage.classList.add("error");
     }
   });
-}
 
-// ---------- MENU DO MURAL ----------
-function setupMuralMenu() {
-  const buttons = document.querySelectorAll('.menu-item');
-  const sections = document.querySelectorAll('.content-section');
-  const logoutButton = document.getElementById('logout-button');
-
-  if (!buttons.length) return;
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const sectionKey = btn.dataset.section;
-      if (!sectionKey) return;
-
-      // ativa/desativa botões
-      buttons.forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      // mostra a seção correspondente
-      sections.forEach((sec) => {
-        if (sec.id === `section-${sectionKey}`) {
-          sec.classList.add('section-visible');
-        } else {
-          sec.classList.remove('section-visible');
-        }
-      });
-    });
-  });
-
-  if (logoutButton) {
-    logoutButton.addEventListener('click', () => {
-      localStorage.removeItem('muralOneLoggedIn');
-      showScreen('login-screen');
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      portalContainer.classList.add("hidden");
+      loginContainer.classList.remove("hidden");
+      loginMessage.textContent = "";
+      loginForm.reset();
     });
   }
 }
 
-// ---------- CALENDÁRIO ----------
-function buildCalendar() {
-  const grid = document.getElementById('calendar-grid');
-  const title = document.getElementById('calendar-title');
-  const prevBtn = document.getElementById('prev-month');
-  const nextBtn = document.getElementById('next-month');
-  const holidayList = document.getElementById('holiday-list');
+/* --------- Calendário operacional --------- */
 
-  if (!grid || !title || !holidayList) return;
+let currentMonthDate = new Date();
 
-  // Exemplo: feriados fixos (podemos puxar de JSON depois)
-  const feriadosFixos = [
-    { dia: 1, mes: 1, nome: 'Confraternização Universal' },
-    { dia: 21, mes: 4, nome: 'Tiradentes' },
-    { dia: 1, mes: 5, nome: 'Dia do Trabalho' },
-    { dia: 7, mes: 9, nome: 'Independência do Brasil' },
-    { dia: 12, mes: 10, nome: 'Nossa Senhora Aparecida' },
-    { dia: 2, mes: 11, nome: 'Finados' },
-    { dia: 15, mes: 11, nome: 'Proclamação da República' },
-    { dia: 25, mes: 12, nome: 'Natal' },
+function setupCalendar() {
+  const prevBtn = document.getElementById("prev-month");
+  const nextBtn = document.getElementById("next-month");
+
+  if (!prevBtn || !nextBtn) return;
+
+  prevBtn.addEventListener("click", () => {
+    currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+    renderCalendar();
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+    renderCalendar();
+  });
+
+  renderCalendar();
+}
+
+// Eventos de exemplo (você pode depois ler isso de um JSON ou do banco)
+function getCalendarEvents() {
+  return {
+    // formato YYYY-MM-DD
+    "2025-01-01": { label: "Confraternização universal", type: "holiday" },
+    "2025-04-21": { label: "Tiradentes", type: "holiday" },
+    "2025-05-01": { label: "Dia do Trabalho", type: "holiday" },
+    "2025-12-25": { label: "Natal", type: "holiday" },
+
+    // Exemplo de unidade fechada
+    "2025-12-26": { label: "Unidade BAR fechada", type: "closed" },
+  };
+}
+
+function renderCalendar() {
+  const grid = document.getElementById("calendar-grid");
+  const title = document.getElementById("calendar-title");
+
+  if (!grid || !title) return;
+
+  const year = currentMonthDate.getFullYear();
+  const month = currentMonthDate.getMonth(); // 0-11
+  const events = getCalendarEvents();
+
+  const monthNames = [
+    "janeiro",
+    "fevereiro",
+    "março",
+    "abril",
+    "maio",
+    "junho",
+    "julho",
+    "agosto",
+    "setembro",
+    "outubro",
+    "novembro",
+    "dezembro",
   ];
 
-  let current = new Date();
+  title.textContent =
+    monthNames[month].charAt(0).toUpperCase() +
+    monthNames[month].slice(1) +
+    " " +
+    year;
 
-  function render(monthDate) {
-    const year = monthDate.getFullYear();
-    const month = monthDate.getMonth(); // 0-11
+  grid.innerHTML = "";
 
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const today = new Date();
+  const weekdays = ["D", "S", "T", "Q", "Q", "S", "S"];
+  weekdays.forEach((d) => {
+    const cell = document.createElement("div");
+    cell.className = "calendar-cell calendar-weekday";
+    cell.textContent = d;
+    grid.appendChild(cell);
+  });
 
-    const monthNames = [
-      'janeiro',
-      'fevereiro',
-      'março',
-      'abril',
-      'maio',
-      'junho',
-      'julho',
-      'agosto',
-      'setembro',
-      'outubro',
-      'novembro',
-      'dezembro',
-    ];
-    const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+  const firstDay = new Date(year, month, 1);
+  const startWeekday = firstDay.getDay(); // 0 = domingo
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    title.textContent = `${monthNames[month]} de ${year}`;
-
-    grid.innerHTML = '';
-
-    // cabeçalho com dias da semana
-    weekDays.forEach((d) => {
-      const cell = document.createElement('div');
-      cell.className = 'day-header';
-      cell.textContent = d;
-      grid.appendChild(cell);
-    });
-
-    // dias em branco antes do dia 1
-    for (let i = 0; i < firstDay.getDay(); i += 1) {
-      const empty = document.createElement('div');
-      empty.className = 'day-cell';
-      grid.appendChild(empty);
-    }
-
-    // dias do mês
-    for (let day = 1; day <= lastDay.getDate(); day += 1) {
-      const cell = document.createElement('div');
-      cell.className = 'day-cell';
-      cell.textContent = day;
-
-      // hoje
-      if (
-        day === today.getDate() &&
-        month === today.getMonth() &&
-        year === today.getFullYear()
-      ) {
-        cell.classList.add('today');
-      }
-
-      // feriado
-      const holiday = feriadosFixos.find(
-        (f) => f.dia === day && f.mes === month + 1,
-      );
-      if (holiday) {
-        cell.classList.add('holiday');
-        cell.title = holiday.nome;
-      }
-
-      grid.appendChild(cell);
-    }
-
-    // Lista de feriados do mês
-    holidayList.innerHTML = '';
-    const feriadosDoMes = feriadosFixos.filter((f) => f.mes === month + 1);
-    if (feriadosDoMes.length === 0) {
-      const li = document.createElement('li');
-      li.textContent = 'Nenhum feriado cadastrado neste mês.';
-      holidayList.appendChild(li);
-    } else {
-      feriadosDoMes.forEach((f) => {
-        const li = document.createElement('li');
-        li.textContent = `${String(f.dia).padStart(2, '0')}/${String(
-          f.mes,
-        ).padStart(2, '0')} - ${f.nome}`;
-        holidayList.appendChild(li);
-      });
-    }
+  for (let i = 0; i < startWeekday; i++) {
+    const emptyCell = document.createElement("div");
+    emptyCell.className = "calendar-cell calendar-empty";
+    grid.appendChild(emptyCell);
   }
 
-  render(current);
+  for (let day = 1; day <= daysInMonth; day++) {
+    const cell = document.createElement("div");
+    cell.className = "calendar-cell calendar-day";
 
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      current = new Date(current.getFullYear(), current.getMonth() - 1, 1);
-      render(current);
-    });
-  }
+    const number = document.createElement("div");
+    number.className = "calendar-day-number";
+    number.textContent = day;
+    cell.appendChild(number);
 
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
-      render(current);
-    });
+    const key =
+      year +
+      "-" +
+      String(month + 1).padStart(2, "0") +
+      "-" +
+      String(day).padStart(2, "0");
+
+    const info = events[key];
+
+    if (info) {
+      const badge = document.createElement("div");
+      const typeClass =
+        info.type === "closed" ? "calendar-badge-closed" : "calendar-badge-holiday";
+      badge.className = "calendar-badge " + typeClass;
+      badge.textContent = info.label;
+      cell.appendChild(badge);
+    }
+
+    grid.appendChild(cell);
   }
 }
 
-// ---------- Chat GPT interno (placeholder) ----------
+/* --------- Agente GPT interno --------- */
+
+const chatHistory = [];
+
 function setupChat() {
-  const form = document.getElementById('chat-form');
-  const input = document.getElementById('chat-input');
-  const history = document.getElementById('chat-history');
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("chat-input");
+  const messagesEl = document.getElementById("chat-messages");
+  const statusEl = document.getElementById("chat-status");
 
-  if (!form || !input || !history) return;
+  if (!form || !input || !messagesEl) return;
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
     const text = input.value.trim();
     if (!text) return;
 
-    // mensagem do usuário
-    const userMsg = document.createElement('div');
-    userMsg.className = 'chat-message chat-message-user';
-    userMsg.textContent = text;
-    history.appendChild(userMsg);
+    appendChatMessage("user", text, messagesEl);
+    chatHistory.push({ role: "user", content: text });
+    input.value = "";
+    statusEl.textContent = "Consultando agente...";
 
-    // resposta fictícia do sistema
-    const systemMsg = document.createElement('div');
-    systemMsg.className = 'chat-message chat-message-system';
-    systemMsg.textContent =
-      'Este é apenas um layout de demonstração. A integração com o agente GPT será configurada pela equipe de TI.';
-    history.appendChild(systemMsg);
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          history: chatHistory,
+        }),
+      });
 
-    history.scrollTop = history.scrollHeight;
-    input.value = '';
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.reply) {
+        statusEl.textContent =
+          data.error || "Erro ao consultar o agente. Tente novamente.";
+        return;
+      }
+
+      statusEl.textContent = "";
+      appendChatMessage("bot", data.reply, messagesEl);
+      chatHistory.push({ role: "assistant", content: data.reply });
+
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    } catch (error) {
+      console.error("Erro no agente GPT:", error);
+      statusEl.textContent = "Erro de conexão com o servidor.";
+    }
   });
 }
 
-// ---------- Inicialização ----------
-document.addEventListener('DOMContentLoaded', () => {
-  // Decide qual tela mostrar ao carregar
-  const logged = localStorage.getItem('muralOneLoggedIn') === 'true';
-  if (logged) {
-    showScreen('mural-screen');
-  } else {
-    showScreen('login-screen');
-  }
+function appendChatMessage(sender, text, container) {
+  const wrapper = document.createElement("div");
+  wrapper.className =
+    "chat-message " +
+    (sender === "user" ? "chat-message-user" : "chat-message-bot");
 
-  setupLogin();
-  setupMuralMenu();
-  buildCalendar();
-  setupChat();
-});
+  const p = document.createElement("p");
+  p.textContent = text;
+  wrapper.appendChild(p);
+
+  container.appendChild(wrapper);
+}

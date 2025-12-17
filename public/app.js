@@ -22,9 +22,11 @@
   const calendarPrev = document.getElementById('calendar-prev');
   const calendarNext = document.getElementById('calendar-next');
   const calendarHolidaysList = document.getElementById('calendar-holidays-list');
+  const calendarShortcuts = document.getElementById('calendar-shortcuts');
 
   let chatHistory = [];
   let calendarEvents = [];
+  let calendarInitialized = false;
   const MONTH_NAMES = [
     'Janeiro',
     'Fevereiro',
@@ -123,7 +125,20 @@
             const dateObj = new Date(year, month - 1, day);
             return { ...evento, dateObj };
           })
-          .filter(Boolean);
+          .filter(Boolean)
+          .sort((a, b) => a.dateObj - b.dateObj);
+
+        if (calendarEvents.length && !calendarInitialized) {
+          const firstEvent = calendarEvents[0].dateObj;
+          currentCalendarDate.setFullYear(
+            firstEvent.getFullYear(),
+            firstEvent.getMonth(),
+            1
+          );
+          calendarInitialized = true;
+        }
+
+        buildCalendarShortcuts();
         renderCalendar();
       }
     } catch (err) {
@@ -138,6 +153,7 @@
     const month = currentCalendarDate.getMonth();
 
     calendarMonthLabel.textContent = `${MONTH_NAMES[month]} ${year}`;
+    updateCalendarShortcutsState();
 
     const firstDayIndex = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -203,6 +219,44 @@
           });
       }
     }
+  }
+
+  function buildCalendarShortcuts() {
+    if (!calendarShortcuts) return;
+    calendarShortcuts.innerHTML = '';
+
+    const seenKeys = new Set();
+    calendarEvents.forEach((evt) => {
+      if (!evt.dateObj) return;
+      const key = `${evt.dateObj.getFullYear()}-${evt.dateObj.getMonth()}`;
+      if (seenKeys.has(key)) return;
+      seenKeys.add(key);
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.key = key;
+      const monthLabel = MONTH_NAMES[evt.dateObj.getMonth()].slice(0, 3);
+      button.textContent = `${monthLabel} ${evt.dateObj.getFullYear()}`;
+      button.addEventListener('click', () => {
+        currentCalendarDate.setFullYear(
+          evt.dateObj.getFullYear(),
+          evt.dateObj.getMonth(),
+          1
+        );
+        renderCalendar();
+      });
+      calendarShortcuts.appendChild(button);
+    });
+
+    updateCalendarShortcutsState();
+  }
+
+  function updateCalendarShortcutsState() {
+    if (!calendarShortcuts) return;
+    const activeKey = `${currentCalendarDate.getFullYear()}-${currentCalendarDate.getMonth()}`;
+    calendarShortcuts.querySelectorAll('button').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.key === activeKey);
+    });
   }
 
   if (assistantShortcut && atendenteSection) {

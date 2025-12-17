@@ -46,40 +46,67 @@
             <h1 class="title">Mural One</h1>
             <p class="subtitle">Portal de comunicação interna.</p>
           </div>
-          <button
-            class="btn-secondary"
-            onclick="window.location.reload()"
-          >
-            Sair
-          </button>
+          <div class="header-actions">
+            <button id="assistant-shortcut" type="button" class="assistant-link">
+              <span class="assistant-icon">IA</span>
+              <span>Atendente IA</span>
+            </button>
+            <button
+              class="btn-secondary"
+              onclick="window.location.reload()"
+            >
+              Sair
+            </button>
+          </div>
         </header>
 
-        <section class="section indicators-section">
-          <h2>Indicadores rápidos</h2>
+        <section class="section metrics-section">
+          <h2>RH em números</h2>
           <p class="section-description">
-            Visão diária do pulso do time para alinhar prioridades.
+            Visão diária do pulso do time e indicadores monitorados semanalmente.
           </p>
-          <div class="indicators-grid">
-            <article class="mini-card">
-              <span class="mini-label">Satisfação</span>
-              <strong>82%</strong>
-              <small>última pesquisa de clima</small>
-            </article>
-            <article class="mini-card">
-              <span class="mini-label">Admissões</span>
-              <strong>12</strong>
-              <small>novos colaboradores em Dez.</small>
-            </article>
-            <article class="mini-card">
-              <span class="mini-label">Movimentações</span>
-              <strong>8</strong>
-              <small>transferências/ promoções</small>
-            </article>
-            <article class="mini-card">
-              <span class="mini-label">Absenteísmo</span>
-              <strong>3,2%</strong>
-              <small>média das unidades</small>
-            </article>
+          <div class="metrics-overview">
+            <div class="indicators-grid">
+              <article class="mini-card">
+                <span class="mini-label">Satisfação</span>
+                <strong>82%</strong>
+                <small>última pesquisa de clima</small>
+              </article>
+              <article class="mini-card">
+                <span class="mini-label">Admissões</span>
+                <strong>12</strong>
+                <small>novos colaboradores em Dez.</small>
+              </article>
+              <article class="mini-card">
+                <span class="mini-label">Absenteísmo</span>
+                <strong>3,2%</strong>
+                <small>média das unidades</small>
+              </article>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <span>Tempo médio de contratação</span>
+                <div class="bar">
+                  <div class="bar-fill" style="width: 65%"></div>
+                </div>
+                <small>28 dias &middot; meta 25 dias</small>
+              </div>
+              <div class="metric-card">
+                <span>Capacitações concluídas</span>
+                <div class="bar">
+                  <div class="bar-fill" style="width: 82%"></div>
+                </div>
+                <small>41 de 50 colaboradores</small>
+              </div>
+              <div class="metric-card">
+                <span>Atualizações cadastrais</span>
+                <div class="bar">
+                  <div class="bar-fill" style="width: 54%"></div>
+                </div>
+                <small>162 de 300 concluídas</small>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -128,6 +155,16 @@
           </div>
         </section>
 
+        <section class="section">
+          <h2>Nossos avisos</h2>
+          <p class="section-description">
+            Espaço reservado para comunicados oficiais do setor de Recursos Humanos.
+          </p>
+          <ul id="avisos-list" class="cards-list">
+            <!-- preenchido pelo app.js a partir de data/content.json -->
+          </ul>
+        </section>
+
         <section class="section form-section">
           <h2>Solicitações rápidas</h2>
           <p class="section-description">
@@ -142,16 +179,6 @@
             <textarea id="solicitacao" rows="3" placeholder="Descreva a necessidade"></textarea>
             <button type="button" class="btn-primary">Registrar interesse</button>
           </form>
-        </section>
-
-        <section class="section">
-          <h2>Parede de avisos</h2>
-          <p class="section-description">
-            Espaço reservado para comunicados oficiais do setor de Recursos Humanos.
-          </p>
-          <ul id="avisos-list" class="cards-list">
-            <!-- preenchido pelo app.js a partir de data/content.json -->
-          </ul>
         </section>
 
         <section class="section split-section">
@@ -179,43 +206,35 @@
               </li>
             </ul>
           </div>
-          <div class="panel">
+          <div class="panel calendar-panel">
             <h2>Calendário operacional</h2>
             <p class="section-description">
               Feriados, folgas, plantões e indicação de unidades abertas/fechadas.
             </p>
-            <ul id="calendario-list" class="cards-list">
-              <!-- preenchido pelo app.js a partir de data/content.json -->
-            </ul>
-          </div>
-        </section>
-
-        <section class="section metrics-section">
-          <h2>RH em números</h2>
-          <p class="section-description">
-            Indicadores principais monitorados semanalmente.
-          </p>
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <span>Tempo médio de contratação</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 65%"></div>
+            <div class="calendar-widget">
+              <div class="calendar-toolbar">
+                <button id="calendar-prev" class="calendar-nav" type="button" aria-label="Mês anterior">
+                  &lsaquo;
+                </button>
+                <div id="calendar-month" class="calendar-month"></div>
+                <button id="calendar-next" class="calendar-nav" type="button" aria-label="Próximo mês">
+                  &rsaquo;
+                </button>
               </div>
-              <small>28 dias &middot; meta 25 dias</small>
+              <div class="calendar-weekdays">
+                <span>Dom</span>
+                <span>Seg</span>
+                <span>Ter</span>
+                <span>Qua</span>
+                <span>Qui</span>
+                <span>Sex</span>
+                <span>Sáb</span>
+              </div>
+              <div id="calendar-grid" class="calendar-grid"></div>
             </div>
-            <div class="metric-card">
-              <span>Capacitações concluídas</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 82%"></div>
-              </div>
-              <small>41 de 50 colaboradores</small>
-            </div>
-            <div class="metric-card">
-              <span>Atualizações cadastrais</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 54%"></div>
-              </div>
-              <small>162 de 300 concluídas</small>
+            <div class="calendar-holidays">
+              <h3>Feriados do mês</h3>
+              <ul id="calendar-holidays-list"></ul>
             </div>
           </div>
         </section>
@@ -235,7 +254,7 @@
           </div>
         </section>
 
-        <section class="section">
+        <section id="atendente-ia" class="section">
           <h2>Atendente IA</h2>
           <p class="section-description">
             Área para conversar com o agente de IA conectado à base interna.

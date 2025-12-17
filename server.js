@@ -58,12 +58,54 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-// Conteúdo do mural (avisos + calendário) vindo de data/content.json
-app.get('/api/content', (req, res) => {
+async function loadAnnouncementsFromSheet() {
+  const sheetId = process.env.SHEETS_SPREADSHEET_ID;
+  const sheetRange = process.env.SHEETS_RANGE;
+  const apiKey = process.env.SHEETS_API_KEY;
+
+  if (!sheetId || !sheetRange || !apiKey) {
+    return null;
+  }
+
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(
+    sheetRange
+  )}?key=${apiKey}`;
+
+  const resp = await fetch(url);
+  if (!resp.ok) {
+    throw new Error(`Sheets API respondeu ${resp.status}`);
+  }
+
+  const sheetData = await resp.json();
+  const rows = Array.isArray(sheetData.values) ? sheetData.values : [];
+
+  return rows
+    .map((row) => ({
+      tag: row[0] || 'Aviso',
+      title: row[1] || '',
+      body: row[2] || ''
+    }))
+    .filter(
+      (item) => item.title.trim() || item.body.trim()
+    );
+}
+
+// Conteúdo do mural (avisos + calendário)
+app.get('/api/content', async (req, res) => {
   try {
     const contentPath = path.join(__dirname, 'data', 'content.json');
     const raw = fs.readFileSync(contentPath, 'utf8');
     const data = JSON.parse(raw);
+
+    try {
+      const sheetAnnouncements = await loadAnnouncementsFromSheet();
+      if (sheetAnnouncements && sheetAnnouncements.length) {
+        data.announcements = sheetAnnouncements;
+      }
+    } catch (sheetError) {
+      console.error('Falha ao buscar dados da planilha:', sheetError);
+    }
+
     res.json(data);
   } catch (err) {
     console.error('Erro ao ler content.json:', err);

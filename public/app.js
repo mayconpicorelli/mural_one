@@ -14,6 +14,7 @@
   const chatInput = document.getElementById('chat-input');
   const chatLog = document.getElementById('chat-log');
   const chatStatus = document.getElementById('chat-status');
+  const chatSuggestions = document.querySelectorAll('.chat-suggestions button');
 
   let chatHistory = [];
 
@@ -116,6 +117,15 @@
     row.innerHTML = `<span class="from">${from === 'user' ? 'Você' : 'Agente'}</span><p>${text}</p>`;
     chatLog.appendChild(row);
     chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  if (chatSuggestions.length && chatInput) {
+    chatSuggestions.forEach((button) => {
+      button.addEventListener('click', () => {
+        chatInput.value = button.textContent.trim();
+        chatInput.focus();
+      });
+    });
   }
 
   if (chatForm) {

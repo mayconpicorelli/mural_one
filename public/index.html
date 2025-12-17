@@ -54,6 +54,96 @@
           </button>
         </header>
 
+        <section class="section indicators-section">
+          <h2>Indicadores rápidos</h2>
+          <p class="section-description">
+            Visão diária do pulso do time para alinhar prioridades.
+          </p>
+          <div class="indicators-grid">
+            <article class="mini-card">
+              <span class="mini-label">Satisfação</span>
+              <strong>82%</strong>
+              <small>última pesquisa de clima</small>
+            </article>
+            <article class="mini-card">
+              <span class="mini-label">Admissões</span>
+              <strong>12</strong>
+              <small>novos colaboradores em Dez.</small>
+            </article>
+            <article class="mini-card">
+              <span class="mini-label">Movimentações</span>
+              <strong>8</strong>
+              <small>transferências/ promoções</small>
+            </article>
+            <article class="mini-card">
+              <span class="mini-label">Absenteísmo</span>
+              <strong>3,2%</strong>
+              <small>média das unidades</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="section resources-section">
+          <h2>Recursos e informativos</h2>
+          <p class="section-description">
+            Acesso rápido a materiais, campanhas em andamento e lembretes do mês.
+          </p>
+          <div class="resources-grid">
+            <div class="resource-card">
+              <div>
+                <h3>Manual do colaborador</h3>
+                <p>Diretrizes oficiais e boas práticas atualizadas em Dez/25.</p>
+              </div>
+              <button class="btn-secondary">Abrir manual</button>
+            </div>
+            <div class="resource-card">
+              <div>
+                <h3>Link do holerite</h3>
+                <p>Acesse o software de holerites e comprovantes financeiros.</p>
+              </div>
+              <button class="btn-primary ghost">Ir para o sistema</button>
+            </div>
+            <div class="resource-card campaigns-card">
+              <div>
+                <h3>Campanhas ativas</h3>
+                <p>Engaje o time com as ações do mês.</p>
+              </div>
+              <ul class="tags-list">
+                <li>Novembro Azul</li>
+                <li>SIPAT 2025</li>
+                <li>Doe Calor</li>
+              </ul>
+            </div>
+            <div class="resource-card birthdays-card">
+              <div>
+                <h3>Aniversariantes do mês</h3>
+                <p>Não deixe de parabenizar.</p>
+              </div>
+              <ul class="birthdays-list">
+                <li><strong>05</strong> - Camila (Financeiro)</li>
+                <li><strong>11</strong> - Rafael (Operações)</li>
+                <li><strong>21</strong> - Joice (RH)</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section form-section">
+          <h2>Solicitações rápidas</h2>
+          <p class="section-description">
+            Centralize pedidos simples para o RH. O envio real será habilitado futuramente.
+          </p>
+          <form class="quick-form">
+            <label for="solicitante">Nome</label>
+            <input id="solicitante" type="text" placeholder="Seu nome completo" />
+            <label for="unidade">Unidade</label>
+            <input id="unidade" type="text" placeholder="Digite a unidade" />
+            <label for="solicitacao">Solicitação</label>
+            <textarea id="solicitacao" rows="3" placeholder="Descreva a necessidade"></textarea>
+            <button type="button" class="btn-primary">Registrar interesse</button>
+          </form>
+        </section>
+
         <section class="section">
           <h2>Parede de avisos</h2>
           <p class="section-description">
@@ -64,14 +154,85 @@
           </ul>
         </section>
 
-        <section class="section">
-          <h2>Calendário operacional</h2>
+        <section class="section split-section">
+          <div class="panel">
+            <h2>Pessoas &amp; movimentações</h2>
+            <p class="section-description">
+              Principais highlights de admissões, promoções e desligamentos.
+            </p>
+            <ul class="people-list">
+              <li>
+                <strong>Promoção</strong>
+                <span>Marcos Silva &middot; Operação &rarr; Coordenação</span>
+              </li>
+              <li>
+                <strong>Nova admissão</strong>
+                <span>Lara Costa &middot; Tech Hub</span>
+              </li>
+              <li>
+                <strong>Transferência</strong>
+                <span>Equipe Norte &rarr; Matriz Central</span>
+              </li>
+              <li>
+                <strong>Desligamento</strong>
+                <span>Programado para 18/12 - suporte administrativo</span>
+              </li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h2>Calendário operacional</h2>
+            <p class="section-description">
+              Feriados, folgas, plantões e indicação de unidades abertas/fechadas.
+            </p>
+            <ul id="calendario-list" class="cards-list">
+              <!-- preenchido pelo app.js a partir de data/content.json -->
+            </ul>
+          </div>
+        </section>
+
+        <section class="section metrics-section">
+          <h2>RH em números</h2>
           <p class="section-description">
-            Feriados, folgas, plantões e indicação de unidades abertas/fechadas.
+            Indicadores principais monitorados semanalmente.
           </p>
-          <ul id="calendario-list" class="cards-list">
-            <!-- preenchido pelo app.js a partir de data/content.json -->
-          </ul>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span>Tempo médio de contratação</span>
+              <div class="bar">
+                <div class="bar-fill" style="width: 65%"></div>
+              </div>
+              <small>28 dias &middot; meta 25 dias</small>
+            </div>
+            <div class="metric-card">
+              <span>Capacitações concluídas</span>
+              <div class="bar">
+                <div class="bar-fill" style="width: 82%"></div>
+              </div>
+              <small>41 de 50 colaboradores</small>
+            </div>
+            <div class="metric-card">
+              <span>Atualizações cadastrais</span>
+              <div class="bar">
+                <div class="bar-fill" style="width: 54%"></div>
+              </div>
+              <small>162 de 300 concluídas</small>
+            </div>
+          </div>
+        </section>
+
+        <section class="section shortcuts-section">
+          <h2>Atalhos úteis do RH</h2>
+          <p class="section-description">
+            Links frequentes para agilizar o atendimento ao colaborador.
+          </p>
+          <div class="shortcuts-grid">
+            <button class="shortcut-btn">Abrir chamados</button>
+            <button class="shortcut-btn">Políticas &amp; normas</button>
+            <button class="shortcut-btn">Agenda de treinamentos</button>
+            <button class="shortcut-btn">Base de documentos</button>
+            <button class="shortcut-btn">Canal de denúncias</button>
+            <button class="shortcut-btn">FAQ Benefícios</button>
+          </div>
         </section>
 
         <section class="section">
@@ -81,6 +242,12 @@
           </p>
 
           <div class="chat-box">
+            <div class="chat-suggestions">
+              <span>Perguntas sugeridas:</span>
+              <button type="button">Quais são os plantões desta semana?</button>
+              <button type="button">Status das atualizações cadastrais</button>
+              <button type="button">Próximos treinamentos obrigatórios</button>
+            </div>
             <div id="chat-log" class="chat-log">
               <!-- mensagens aparecem aqui -->
             </div>
@@ -97,6 +264,11 @@
             <p id="chat-status" class="chat-status"></p>
           </div>
         </section>
+
+        <footer class="portal-footer">
+          <p>Gerência de Tecnologia &amp; RH • suporte@empresa.com</p>
+          <p>Mural One &copy; 2025</p>
+        </footer>
       </div>
     </div>
 
